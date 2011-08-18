@@ -1,5 +1,5 @@
-# Gem and other dependencies
-require 'rubygems'
+require "epp/version"
+# require 'rubygems'
 require 'openssl'
 require 'libxml'
 require 'hpricot'
