@@ -4,6 +4,7 @@ require 'openssl'
 require 'libxml'
 require 'hpricot'
 require 'uuidtools'
+require 'socket'
 
 # Package files
 require File.dirname(__FILE__) + '/require_parameters.rb'
