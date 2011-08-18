@@ -21,7 +21,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("hpricot", [">= 0"])
   s.add_runtime_dependency("uuidtools", [">= 0"])
   s.add_runtime_dependency("libxml-ruby", [">= 0"])
-  s.add_runtime_dependency("socket", [">= 0"])
 
   s.add_development_dependency("shoulda", [">= 0"])
   s.add_development_dependency("mocha", [">= 0"])
