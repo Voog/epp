@@ -45,7 +45,9 @@ class EppTest < Test::Unit::TestCase
           :lang => "es",
           :services => ["urn:ietf:params:xml:ns:domain-nom-ext-1.1.xsd"],
           :extensions => ["domain-nom-ext-1.1.xsd"],
-          :version => "90.0"
+          :version => "90.0",
+          :key => "ssl_key",
+          :cert => "ssl_cert"
         )
         
         assert_equal "TAG", epp.tag
@@ -56,6 +58,8 @@ class EppTest < Test::Unit::TestCase
         assert_equal ["urn:ietf:params:xml:ns:domain-nom-ext-1.1.xsd"], epp.services
         assert_equal ["domain-nom-ext-1.1.xsd"], epp.extensions
         assert_equal "90.0", epp.version
+        assert_equal "ssl_key", epp.key
+        assert_equal "ssl_cert", epp.cert
       end
       
       should "build a new XML request" do
