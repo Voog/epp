@@ -1,4 +1,4 @@
-require "epp/version"
+require File.dirname(__FILE__) + "/epp/version"
 # require 'rubygems'
 require 'openssl'
 require 'libxml'
