@@ -1,8 +1,7 @@
 require File.dirname(__FILE__) + "/epp/version"
 # require 'rubygems'
 require 'openssl'
-require 'libxml'
-require 'hpricot'
+require 'nokogiri'
 require 'uuidtools'
 require 'socket'
 

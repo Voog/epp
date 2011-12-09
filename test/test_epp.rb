@@ -65,8 +65,8 @@ class EppTest < Test::Unit::TestCase
       should "build a new XML request" do
         xml = xml_file("new_request.xml")
 
-        assert @epp.new_epp_request.is_a?(LibXML::XML::Document)
-        assert_equal xml, @epp.new_epp_request.to_s
+        assert @epp.build_epp_request.is_a?(Nokogiri::XML::Builder)
+        assert_equal xml, @epp.build_epp_request.to_xml
       end
 
       should "open connection and receive a greeting" do

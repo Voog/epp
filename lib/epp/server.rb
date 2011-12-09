@@ -1,6 +1,5 @@
 module Epp #:nodoc:
   class Server
-    include LibXML::XML
     include RequiresParameters
 
     attr_accessor :tag, :password, :server, :port, :lang, :services, :extensions, :version, :key, :cert
@@ -37,15 +36,16 @@ module Epp #:nodoc:
       @logged_in  = false
     end
 
-    def new_epp_request
-      xml = Document.new
-      xml.root = Node.new("epp")
-
-      xml.root["xmlns"] = "urn:ietf:params:xml:ns:epp-1.0"
-      xml.root["xmlns:xsi"] = "http://www.w3.org/2001/XMLSchema-instance"
-      xml.root["xsi:schemaLocation"] = "urn:ietf:params:xml:ns:epp-1.0 epp-1.0.xsd"
-
-      return xml
+    def build_epp_request(&block)
+      builder = Nokogiri::XML::Builder.new(:encoding => 'UTF-8') do |xml|
+        xml.epp(
+          'xmlns' => 'urn:ietf:params:xml:ns:epp-1.0',
+          'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
+          'xsi:schemaLocation' => 'urn:ietf:params:xml:ns:epp-1.0 epp-1.0.xsd'
+        ) do
+          yield xml if block_given?
+        end
+      end
     end
 
     # Sends an XML request to the EPP server, and receives an XML response.
@@ -144,34 +144,34 @@ module Epp #:nodoc:
     def login
       raise SocketError, "Socket must be opened before logging in" if !@socket or @socket.closed?
 
-      xml = new_epp_request
-
-      xml.root << command = Node.new("command")
-      command << login = Node.new("login")
-
-      login << Node.new("clID", tag)
-      login << Node.new("pw", password)
-
-      login << options = Node.new("options")
-
-      options << Node.new("version", version)
-      options << Node.new("lang", lang)
-
-      login << services = Node.new("svcs")
-
-      services << Node.new("objURI", "urn:ietf:params:xml:ns:domain-1.0")
-      services << Node.new("objURI", "urn:ietf:params:xml:ns:contact-1.0")
-      services << Node.new("objURI", "urn:ietf:params:xml:ns:host-1.0")
-
-      services << extensions_container = Node.new("svcExtension") unless extensions.empty?
-
-      for uri in extensions
-        extensions_container << Node.new("extURI", uri)
+      builder = build_xml_request do |xml|
+        xml.command {
+          xml.login {
+            xml.clID tag
+            xml.pw password
+            xml.options {
+              xml.version version
+              xml.lang lang
+            }
+            xml.svcs {
+              xml.objURI "urn:ietf:params:xml:ns:domain-1.0"
+              xml.objURI "urn:ietf:params:xml:ns:contact-1.0"
+              xml.objURI "urn:ietf:params:xml:ns:host-1.0"
+              
+              unless extensions.empty?
+                xml.svcExtension {
+                  for uri in extensions
+                    xml.extURI uri
+                  end
+                }
+              end
+            }
+          }
+          xml.clTRID UUIDTools::UUID.timestamp_create.to_s
+        }
       end
 
-      command << Node.new("clTRID", UUIDTools::UUID.timestamp_create.to_s)
-
-      response = Hpricot::XML(send_request(xml.to_s))
+      response = Nokogiri::XML(send_request(builder.to_xml))
 
       handle_response(response)
     end
@@ -180,25 +180,25 @@ module Epp #:nodoc:
     def logout
       raise SocketError, "Socket must be opened before logging out" if !@socket or @socket.closed?
 
-      xml = new_epp_request
+      builder = build_xml_request do |xml|
+        xml.command {
+          xml.logout
+          xml.clTRID UUIDTools::UUID.timestamp_create.to_s
+        }
+      end
 
-      xml.root << command = Node.new("command")
-
-      command << login = Node.new("logout")
-      command << Node.new("clTRID", UUIDTools::UUID.timestamp_create.to_s)
-
-      response = Hpricot::XML(send_request(xml.to_s))
+      response = Nokogiri::XML(send_request(xml.to_s))
 
       handle_response(response, 1500)
     end
 
     def handle_response(response, acceptable_response = 1000)
-      result_code = (response/"epp"/"response"/"result").attr("code").to_i
+      result_code = doc.css('epp response result').first['code'].to_i
 
       if result_code == acceptable_response
         return true
       else
-        result_message  = (response/"epp"/"response"/"result"/"msg").text.strip
+        result_message = doc.css('epp response result msg').first.text.strip
 
         raise EppErrorResponse.new(:xml => response, :code => result_code, :message => result_message)
       end
