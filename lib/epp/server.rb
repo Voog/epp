@@ -144,7 +144,7 @@ module Epp #:nodoc:
     def login
       raise SocketError, "Socket must be opened before logging in" if !@socket or @socket.closed?
 
-      builder = build_xml_request do |xml|
+      builder = build_epp_request do |xml|
         xml.command {
           xml.login {
             xml.clID tag
@@ -180,20 +180,20 @@ module Epp #:nodoc:
     def logout
       raise SocketError, "Socket must be opened before logging out" if !@socket or @socket.closed?
 
-      builder = build_xml_request do |xml|
+      builder = build_epp_request do |xml|
         xml.command {
           xml.logout
           xml.clTRID UUIDTools::UUID.timestamp_create.to_s
         }
       end
 
-      response = Nokogiri::XML(send_request(xml.to_s))
+      response = Nokogiri::XML(send_request(builder.to_xml))
 
       handle_response(response, 1500)
     end
 
     def handle_response(response, acceptable_response = 1000)
-      result_code = doc.css('epp response result').first['code'].to_i
+      result_code = response.css('epp response result').first['code'].to_i
 
       if result_code == acceptable_response
         return true
