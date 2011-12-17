@@ -75,21 +75,6 @@ module Epp #:nodoc:
       get_frame
     end
     
-    # Opens session to EPP server, and yields the block given. Wraps login and
-    # logout request around it.
-    def command_session(&block)
-      open_connection
-
-      @logged_in = true if login
-
-      begin
-        yield
-      ensure
-        @logged_in = false if @logged_in && logout
-        close_connection
-      end
-    end
-
     # Establishes the connection to the server. If the connection is
     # established, then this method will call get_frame and return
     # the EPP <tt><greeting></tt> frame which is sent by the
