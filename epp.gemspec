@@ -3,10 +3,10 @@ $:.push File.expand_path("../lib", __FILE__)
 require "epp/version"
 
 Gem::Specification.new do |s|
-  s.name        = "epp"
+  s.name        = "epp-nokogiri"
   s.version     = Epp::VERSION
-  s.authors     = ["Josh Delsman", "Delwyn de Villiers"]
-  s.email       = ["jdelsman@ultraspeed.com", "delwyn.d@gmail.com"]
+  s.authors     = ["Josh Delsman", "Delwyn de Villiers", "Priit Haamer"]
+  s.email       = ["jdelsman@ultraspeed.com", "delwyn.d@gmail.com", "priit@edicy.com"]
   s.homepage    = "http://github.com/delwyn/epp"
   s.summary     = %q{EPP (Extensible Provisioning Protocol) for Ruby}
   s.description = %q{Basic functionality for connecting and making requests on EPP (Extensible Provisioning Protocol) servers}
