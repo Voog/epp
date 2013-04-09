@@ -22,15 +22,3 @@ rescue LoadError
 end
 
 task :default => :test
-
-require 'rake/rdoctask'
-Rake::RDocTask.new do |rdoc|
-  version = File.exist?('VERSION') ? File.read('VERSION') : ""
-
-  rdoc.rdoc_dir = 'doc/rdoc'
-  rdoc.options << '--fmt' << 'shtml'
-  rdoc.template = 'direct'
-
-  rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
-end
