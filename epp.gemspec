@@ -24,4 +24,5 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency("shoulda", [">= 0"])
   s.add_development_dependency("mocha", [">= 0"])
+  s.add_development_dependency("rake", [">= 0"])
 end
