@@ -7,9 +7,10 @@ Gem::Specification.new do |s|
   s.version     = Epp::VERSION
   s.authors     = ["Josh Delsman", "Delwyn de Villiers", "Priit Haamer"]
   s.email       = ["jdelsman@ultraspeed.com", "delwyn.d@gmail.com", "priit@edicy.com"]
-  s.homepage    = "http://github.com/delwyn/epp"
+  s.homepage    = "https://github.com/priithaamer/epp"
   s.summary     = %q{EPP (Extensible Provisioning Protocol) for Ruby}
   s.description = %q{Basic functionality for connecting and making requests on EPP (Extensible Provisioning Protocol) servers}
+  s.license     = 'MIT'
 
   s.rubyforge_project = "epp"
 
