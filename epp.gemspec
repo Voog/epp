@@ -5,9 +5,9 @@ require "epp/version"
 Gem::Specification.new do |s|
   s.name        = "epp-nokogiri"
   s.version     = Epp::VERSION
-  s.authors     = ["Josh Delsman", "Delwyn de Villiers", "Priit Haamer"]
-  s.email       = ["jdelsman@ultraspeed.com", "delwyn.d@gmail.com", "priit@edicy.com"]
-  s.homepage    = "https://github.com/priithaamer/epp"
+  s.authors     = ['Josh Delsman', 'Delwyn de Villiers', 'Priit Haamer', 'Tanel Jakobsoo']
+  s.email       = ['jdelsman@ultraspeed.com', 'delwyn.d@gmail.com', 'priit@edicy.com', 'tanel@voog.com']
+  s.homepage    = "https://github.com/Voog/epp"
   s.summary     = %q{EPP (Extensible Provisioning Protocol) for Ruby}
   s.description = %q{Basic functionality for connecting and making requests on EPP (Extensible Provisioning Protocol) servers}
   s.license     = 'MIT'
