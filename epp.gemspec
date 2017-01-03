@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("uuidtools", [">= 0"])
 
   s.add_development_dependency("shoulda", [">= 0"])
+  s.add_development_dependency("minitest", [">= 0"])
   s.add_development_dependency("mocha", [">= 0"])
   s.add_development_dependency("rake", [">= 0"])
 end
