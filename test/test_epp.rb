@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class EppTest < Test::Unit::TestCase
+class EppTest < Minitest::Test
   context "EPP" do
     context "server" do
       setup do
@@ -31,9 +31,8 @@ class EppTest < Test::Unit::TestCase
           epp = Epp::Server.new(:server => "a", :tag => "a")
         end
 
-        assert_nothing_raised do
-          epp = Epp::Server.new(:server => "a", :tag => "a", :password => "a")
-        end
+        # Assert nothing raised
+        assert Epp::Server.new(:server => "a", :tag => "a", :password => "a")
       end
 
       should "set instance variables for attributes" do
@@ -195,9 +194,8 @@ class EppTest < Test::Unit::TestCase
           e = EppErrorResponse.new(:xml => "a", :code => "a")
         end
 
-        assert_nothing_raised do
-          e = EppErrorResponse.new(:xml => "a", :code => "a", :message => "a")
-        end
+        # Assert nothing raised
+        assert EppErrorResponse.new(:xml => "a", :code => "a", :message => "a")
       end
 
       should "print error message to string" do

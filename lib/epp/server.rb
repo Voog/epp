@@ -2,7 +2,7 @@ module Epp #:nodoc:
   class Server
     include RequiresParameters
 
-    attr_accessor :tag, :password, :server, :port, :lang, :services, :extensions, :version, :key, :cert
+    attr_accessor :tag, :password, :server, :port, :xmlns, :xmlns_xsi, :xsi_schema_location, :lang, :services, :extensions, :version, :key, :cert
 
     # ==== Required Attrbiutes
     #
@@ -13,6 +13,9 @@ module Epp #:nodoc:
     # ==== Optional Attributes
     #
     # * <tt>:port</tt> - The EPP standard port is 700. However, you can choose a different port to use.
+    # * <tt>:xmlns</tt> - The EPP xmlns value. Default is 'urn:ietf:params:xml:ns:epp-1.0'.
+    # * <tt>:xmlns_xsi</tt> - The EPP xmlns:xsi value. Default is 'http://www.w3.org/2001/XMLSchema-instance'.
+    # * <tt>:xsi_schema_location</tt> - The EPP xsi:schemaLocation value. Default is 'urn:ietf:params:xml:ns:epp-1.0 epp-1.0.xsd'.
     # * <tt>:lang</tt> - Set custom language attribute. Default is 'en'.
     # * <tt>:services</tt> - Use custom EPP services in the <login> frame. The defaults use the EPP standard domain, contact and host 1.0 services.
     # * <tt>:extensions</tt> - URLs to custom extensions to standard EPP. Use these to extend the standard EPP (e.g., Nominet uses extensions). Defaults to none.
@@ -26,6 +29,9 @@ module Epp #:nodoc:
       @password   = attributes[:password]
       @server     = attributes[:server]
       @port       = attributes[:port]       || 700
+      @xmlns      = attributes[:xmlns]      || 'urn:ietf:params:xml:ns:epp-1.0'
+      @xmlns_xsi  = attributes[:xmlns_xsi]  || 'http://www.w3.org/2001/XMLSchema-instance'
+      @xsi_schema_location = attributes[:xsi_schema_location] || 'urn:ietf:params:xml:ns:epp-1.0 epp-1.0.xsd'
       @lang       = attributes[:lang]       || "en"
       @services   = attributes[:services]   || ["urn:ietf:params:xml:ns:domain-1.0", "urn:ietf:params:xml:ns:contact-1.0", "urn:ietf:params:xml:ns:host-1.0"]
       @extensions = attributes[:extensions] || []
@@ -39,9 +45,9 @@ module Epp #:nodoc:
     def build_epp_request(&block)
       builder = Nokogiri::XML::Builder.new(:encoding => 'UTF-8') do |xml|
         xml.epp(
-          'xmlns' => 'urn:ietf:params:xml:ns:epp-1.0',
-          'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
-          'xsi:schemaLocation' => 'urn:ietf:params:xml:ns:epp-1.0 epp-1.0.xsd'
+          'xmlns' => xmlns,
+          'xmlns:xsi' => xmlns_xsi,
+          'xsi:schemaLocation' => xsi_schema_location
         ) do
           yield xml if block_given?
         end
@@ -154,9 +160,11 @@ module Epp #:nodoc:
               xml.lang lang
             }
             xml.svcs {
-              xml.objURI "urn:ietf:params:xml:ns:domain-1.0"
-              xml.objURI "urn:ietf:params:xml:ns:contact-1.0"
-              xml.objURI "urn:ietf:params:xml:ns:host-1.0"
+              unless services.empty?
+                services.each do |uri|
+                  xml.objURI uri
+                end
+              end
               
               unless extensions.empty?
                 xml.svcExtension {
@@ -198,7 +206,7 @@ module Epp #:nodoc:
       if result_code == acceptable_response
         return true
       else
-        result_message = doc.css('epp response result msg').first.text.strip
+        result_message = response.css('epp response result msg').first.text.strip
 
         raise EppErrorResponse.new(:xml => response, :code => result_code, :message => result_message)
       end
